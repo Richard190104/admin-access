@@ -168,6 +168,17 @@
                     </div>
                     <div class="text-caption text-grey">email: {{ user.email }}</div>
                   </q-item-section>
+                  <q-item-section>
+                    <div class="text-caption text-grey">
+                      Termíny:
+                      <div v-if="user.dates && user.dates.length > 0">
+                        <div v-for="date in user.dates" :key="String(date)" class="text-black">
+                          <div v-if="date">{{ formatDate(String(date) ?? '') }}</div>
+                        </div>
+                      </div>
+                      <div v-else class="text-black">Žiadne termíny</div>
+                    </div>
+                  </q-item-section>
 
                   <q-item-section side>
                     <q-btn
@@ -258,7 +269,7 @@ export default defineComponent({
       openedExpansion: false,
       displayRemoveUserInfo: false,
       clickedUserForRemove: { userID: null as number | null, name: '' as string },
-      users: [] as Array<{ userID: number; name: string; email?: string }>,
+      users: [] as Array<{ userID: number; name: string; email?: string; dates?: Date[] }>,
       newUser: { userID: '', email: null } as { userID: string; email: string | null },
     };
   },
@@ -406,11 +417,14 @@ export default defineComponent({
         .then((r) => r.json())
         .then((data) => {
           if (Array.isArray(data.users)) {
-            this.users = data.users.map((u: { userID: number; name: string; email: string }) => ({
-              userID: u.userID,
-              name: u.name,
-              email: u.email,
-            }));
+            this.users = data.users.map(
+              (u: { userID: number; name: string; email: string; date1: Date; date2: Date }) => ({
+                userID: u.userID,
+                name: u.name,
+                email: u.email,
+                dates: [u.date1, u.date2],
+              }),
+            );
           } else {
             this.users = [];
           }
