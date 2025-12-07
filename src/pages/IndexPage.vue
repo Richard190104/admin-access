@@ -310,7 +310,10 @@ export default defineComponent({
                 new Date(a.date).getTime() - new Date(b.date).getTime(),
             );
           }
-
+          data.dates = data.dates.filter((d: dateSelection) => {
+            const dateYear = new Date(d.date).getFullYear();
+            return dateYear <= 2028;
+          });
           this.allDates = data.dates.map((d: dateSelection) => ({
             id: d.id,
             date: this.formatDate(d.date),
